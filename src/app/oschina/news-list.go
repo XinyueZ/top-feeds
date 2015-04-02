@@ -73,8 +73,11 @@ func (self *NewsList) Create(cxt appengine.Context, page int, chJsonStr chan *st
 						cxt.Infof("Json: %s", json)
 						s += json
 					}
-					s = s[:len(s)-1] //Remove last ","
-					s += "]"         //Stop making json
+					length := len(s)
+					if length > 2 {
+						s = s[:length-1] //Remove last ","
+					}
+					s += "]" //Stop making json
 					chJsonStr <- &s
 				} else {
 					chJsonStr <- nil
