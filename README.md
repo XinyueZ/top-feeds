@@ -8,6 +8,8 @@ Getting top-news of IT from comminuty [CSDN](http://www.csdn.net)  and
 
 ####Url: http://top-feeds-90308.appspot.com/topfeeds
 
+####Method: GET
+
 ####Parameters
 
 Var     |  Value
@@ -15,6 +17,12 @@ Var     |  Value
 type    | 1 ([CSDN](http://www.csdn.net)) or other([OSCHINA](http://www.oschina.net)), default is other.
 page    | The page-index >= 0. But it works only when type == 0 ([OSCHINA](http://www.oschina.net))
 
+
+####Example
+
+[OSCHINA](http://www.oschina): http://top-feeds-90308.appspot.com/topfeeds?type=0&page=0
+
+[CSDN](http://www.csdn.net) : http://top-feeds-90308.appspot.com/topfeeds?type=1
 
 ####Result
 
