@@ -34,20 +34,27 @@ func handleTopFeeds(w http.ResponseWriter, r *http.Request) {
 	typ, _ := strconv.Atoi(args["type"][0])  //Which type, 0: oschina, 1: csdn
 	page, _ := strconv.Atoi(args["page"][0]) //Which page, if typ is csdn, then ignore this.
 
+	site := ""
+	siteMobile := ""
 	res := ""
 	switch typ {
 	case 1:
 		//Ask csdn:
 		res = "coming soon."
+		site = "http://www.csdn.net"
+		siteMobile = "http://m.csdn.net"
 	default:
 		//Ask news-list of www.oschina.net
 		chOsc := make(chan *string)
 		go oschina.NewNewsList().Create(cxt, page, chOsc)
 		res = *(<-chOsc)
+
+		site = "http://www.oschina.net"
+		siteMobile = "http://m.oschina.net"
 	}
 
 	//Output result of all news-list of all sites.
-	s := fmt.Sprintf(`{"status":%d, "result":%s}`, 200, res)
+	s := fmt.Sprintf(`{"status":%d, "site" : "%s", "site_mobile":"%s", "result":%s}`, 200, site, siteMobile, res)
 	w.Header().Set("Content-Type", "application/json")
 	fmt.Fprintf(w, s)
 }
