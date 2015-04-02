@@ -27,13 +27,24 @@ func handleTopFeeds(w http.ResponseWriter, r *http.Request) {
 	defer func() {
 		if err := recover(); err != nil {
 			cxt.Errorf("handleTopFeeds: %v", err)
+			w.Header().Set("Content-Type", "application/json")
 			fmt.Fprintf(w, `{"status":%d}`, 300)
 		}
 	}()
 
 	args := r.URL.Query()
-	typ, _ := strconv.Atoi(args["type"][0])  //Which type, 0: oschina, 1: csdn
-	page, _ := strconv.Atoi(args["page"][0]) //Which page, if typ is csdn(1), then ignore this.
+
+	typ := 0 //Which type, 0: oschina, 1: csdn
+	if len(args["type"]) > 0 {
+		t, _ := strconv.Atoi(args["type"][0])
+		typ = t
+	}
+
+	page := 0
+	if len(args["page"]) > 0 {
+		p, _ := strconv.Atoi(args["page"][0]) //Which page, if typ is csdn(1), then ignore this.
+		page = p
+	}
 
 	site := ""
 	siteMobile := ""
