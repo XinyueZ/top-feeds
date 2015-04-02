@@ -54,7 +54,7 @@ func (self *NewsList) Create(cxt appengine.Context, chJsonStr chan *string) {
 						v.Title = strings.Replace(v.Title, "\"", "'", -1)
 						v.UrlMobile = strings.Replace(v.Url, "www", "m", -1)
 						json := fmt.Sprintf(`{"title" : "%s", "desc" : "%s", "url" : "%s", "url_mobile" : "%s",  "pubDate" : "%s" },`, v.Title, v.Description, v.Url, v.UrlMobile, v.PubDate)
-						cxt.Infof("Json: %s", json)
+						//cxt.Infof("Json: %s", json)
 						s += json
 					}
 					length := len(s)

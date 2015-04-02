@@ -15,7 +15,8 @@ const (
 	//catalog:1 for all
 	//pageIndex: The first page.
 	//pageSize:20
-	API = "http://www.oschina.net/action/api/news_list?catalog=1&pageIndex=%d&pageSize=20"
+	API    = "http://www.oschina.net/action/api/news_list?catalog=1&pageIndex=%d&pageSize=20"
+	DETAIL = "http://www.oschina.net/action/api/news_detail?id=%d"
 )
 
 func NewNewsList() (p *NewsList) {
@@ -42,10 +43,20 @@ type NewsEntry struct {
 	Url          string `xml:"url"` //Might be empty then the news-type should be used to build a url
 	UrlMobile    string
 	NewsType     NewsType `xml:"newstype"`
+	Description  string
 }
 
 type NewsType struct {
 	Type int `xml:"type"`
+}
+
+type NewsDetail struct {
+	XMLName  xml.Name `xml:"oschina"`
+	NewsBody NewsBody `xml:"news"`
+}
+
+type NewsBody struct {
+	Content string `xml:"body"`
 }
 
 //Create a news-list and return a json-feeds to client through channel.
@@ -69,8 +80,27 @@ func (self *NewsList) Create(cxt appengine.Context, page int, chJsonStr chan *st
 						} else {
 							v.UrlMobile = v.Url
 						}
-						json := fmt.Sprintf(`{"title" : "%s", "desc" : "%s", "url" : "%s", "url_mobile" : "%s",  "pubDate" : "%s" },`, v.Title, "", v.Url, v.UrlMobile, v.PubDate)
-						cxt.Infof("Json: %s", json)
+
+						//To fetch details and make description.
+						/*
+							if r, e := http.NewRequest("GET", fmt.Sprintf(DETAIL, v.Id), nil); e == nil {
+								if resp, e := client.Do(r); e == nil {
+									if resp != nil {
+										defer resp.Body.Close()
+									}
+
+									pNewsDetail := new(NewsDetail)
+									if bytes, e := ioutil.ReadAll(resp.Body); e == nil {
+										//cxt.Infof("Details: %v", string(bytes))
+										if e := xml.Unmarshal(bytes, pNewsDetail); e == nil {
+											v.Description = pNewsDetail.NewsBody.Content[0:20]
+										}
+									}
+								}
+							}
+						*/
+						json := fmt.Sprintf(`{"title" : "%s", "desc" : "%s", "url" : "%s", "url_mobile" : "%s",  "pubDate" : "%s" },`, v.Title, v.Description, v.Url, v.UrlMobile, v.PubDate)
+						//cxt.Infof("Json: %s", json)
 						s += json
 					}
 					length := len(s)
