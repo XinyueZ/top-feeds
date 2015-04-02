@@ -8,7 +8,7 @@ Getting top-news of IT from comminuty [CSDN](http://www.csdn.net)  and
 
 ####Url: http://top-feeds-90308.appspot.com/topfeeds
 
-####Method: GET
+####Method: ```GET```
 
 ####Parameters
 
