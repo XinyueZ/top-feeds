@@ -1,7 +1,7 @@
 Top Feeds  
 ==============
 Getting top-news of IT from comminuty [CSDN](http://www.csdn.net)  and
-[OSCHINA](http://www.oschina)
+[OSCHINA](http://www.oschina) .
 
 
 #API
