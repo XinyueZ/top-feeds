@@ -31,7 +31,7 @@ page    | The page-index >= 0. But it works only when type == 0 ([OSCHINA](http:
 Var      | Type     | Comment
 ---------|---------|---------
 status        |int   |200 is OK, 300 or other is error.
-page_index        |int   |Page index of list. When the feeds from ([OSCHINA](http://www.oschina.net)), it must be 0 always, otherwise works >= 0.
+page_index        |int   |Page index of list. When the feeds from [CSDN](http://www.csdn.net), it must be 0 always, otherwise works >= 0.
 site        |string   |The host of feeds.
 site_mobile        |string   |The mobile-host of feeds.
 result        |array    |The list of news-entry.
