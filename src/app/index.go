@@ -1,6 +1,7 @@
 package topfeeds
 
 import (
+	"csdn"
 	"fmt"
 	"net/http"
 	"oschina"
@@ -32,7 +33,7 @@ func handleTopFeeds(w http.ResponseWriter, r *http.Request) {
 
 	args := r.URL.Query()
 	typ, _ := strconv.Atoi(args["type"][0])  //Which type, 0: oschina, 1: csdn
-	page, _ := strconv.Atoi(args["page"][0]) //Which page, if typ is csdn, then ignore this.
+	page, _ := strconv.Atoi(args["page"][0]) //Which page, if typ is csdn(1), then ignore this.
 
 	site := ""
 	siteMobile := ""
@@ -40,7 +41,10 @@ func handleTopFeeds(w http.ResponseWriter, r *http.Request) {
 	switch typ {
 	case 1:
 		//Ask csdn:
-		res = "coming soon."
+		chCsdn := make(chan *string)
+		go csdn.NewNewsList().Create(cxt, chCsdn)
+		res = *(<-chCsdn)
+
 		site = "http://www.csdn.net"
 		siteMobile = "http://m.csdn.net"
 	default:
