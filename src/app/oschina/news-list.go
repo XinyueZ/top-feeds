@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"time"
 
 	"appengine"
 	"appengine/urlfetch"
@@ -17,6 +18,14 @@ const (
 	//pageSize:20
 	API    = "http://www.oschina.net/action/api/news_list?catalog=1&pageIndex=%d&pageSize=20"
 	DETAIL = "http://www.oschina.net/action/api/news_detail?id=%d"
+	// `Format` and `Parse` use example-based layouts. Usually
+	// you'll use a constant from `time` for these layouts, but
+	// you can also supply custom layouts. Layouts must use the
+	// reference time `Mon Jan 2 15:04:05 MST 2006` to show the
+	// pattern with which to format/parse a given time/string.
+	// The example time must be exactly as shown: the year 2006,
+	// 15 for the hour, Monday for the day of the week, etc.
+	OSC_DATE_FORMAT = "2006-01-02 15:04:05"
 )
 
 func NewNewsList() (p *NewsList) {
@@ -99,7 +108,12 @@ func (self *NewsList) Create(cxt appengine.Context, page int, chJsonStr chan *st
 								}
 							}
 						*/
-						json := fmt.Sprintf(`{"title" : "%s", "desc" : "%s", "url" : "%s", "url_mobile" : "%s",  "pubDate" : "%s" },`, v.Title, v.Description, v.Url, v.UrlMobile, v.PubDate)
+
+						loc, _ := time.LoadLocation("Asia/Shanghai")
+						t, _ := time.ParseInLocation(OSC_DATE_FORMAT, v.PubDate, loc)
+						v.PubDate = t.String()
+						pubDate := t.Unix()
+						json := fmt.Sprintf(`{"title" : "%s", "desc" : "%s", "url" : "%s", "url_mobile" : "%s",  "pubDate" : %d },`, v.Title, v.Description, v.Url, v.UrlMobile, pubDate)
 						//cxt.Infof("Json: %s", json)
 						s += json
 					}

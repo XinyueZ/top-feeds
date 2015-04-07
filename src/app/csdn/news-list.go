@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"time"
 
 	"appengine"
 	"appengine/urlfetch"
@@ -13,6 +14,14 @@ import (
 
 const (
 	API = "http://www.csdn.net/article/rss_lastnews"
+	// `Format` and `Parse` use example-based layouts. Usually
+	// you'll use a constant from `time` for these layouts, but
+	// you can also supply custom layouts. Layouts must use the
+	// reference time `Mon Jan 2 15:04:05 MST 2006` to show the
+	// pattern with which to format/parse a given time/string.
+	// The example time must be exactly as shown: the year 2006,
+	// 15 for the hour, Monday for the day of the week, etc.
+	CSDN_DATE_FORMAT = "Mon, 02 Jan 2006 15:04:05"
 )
 
 func NewNewsList() (p *NewsList) {
@@ -53,7 +62,12 @@ func (self *NewsList) Create(cxt appengine.Context, chJsonStr chan *string) {
 					for _, v := range pNewsList.Channel.NewsEntries {
 						v.Title = strings.Replace(v.Title, "\"", "'", -1)
 						v.UrlMobile = strings.Replace(v.Url, "www", "m", -1)
-						json := fmt.Sprintf(`{"title" : "%s", "desc" : "%s", "url" : "%s", "url_mobile" : "%s",  "pubDate" : "%s" },`, v.Title, v.Description, v.Url, v.UrlMobile, v.PubDate)
+
+						loc, _ := time.LoadLocation("Asia/Shanghai")
+						t, _ := time.ParseInLocation(CSDN_DATE_FORMAT, v.PubDate, loc)
+						v.PubDate = t.String()
+						pubDate := t.Unix()
+						json := fmt.Sprintf(`{"title" : "%s", "desc" : "%s", "url" : "%s", "url_mobile" : "%s",  "pubDate" : %d },`, v.Title, v.Description, v.Url, v.UrlMobile, pubDate)
 						//cxt.Infof("Json: %s", json)
 						s += json
 					}
