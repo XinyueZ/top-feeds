@@ -44,7 +44,7 @@ title        |string   |News title.
 desc        |string   |Description of news, might be empty.
 url        |string   |News location.
 url_mobile        |string    |News location on mobile-host.
-pubDate        |string    |News published date.
+pubDate        |long    |News published date in timestamp.
 
 ####Example
 
@@ -60,14 +60,14 @@ pubDate        |string    |News published date.
                 "desc": "",
                 "url": "http://www.oschina.net/news/61151",
                 "url_mobile": "http://m.oschina.net/news/61151",
-                "pubDate": "2015-04-02 18:46:25"
+                "pubDate": 234523452345
               },
               {
                 "title": "JSUtil 1.1.2 开始支持存储过程调用啦！",
                 "desc": "",
                 "url": "http://www.oschina.net/news/61149",
                 "url_mobile": "http://m.oschina.net/news/61149",
-                "pubDate": "2015-04-02 15:03:14"
+                "pubDate": 234523452345
               },
               ......
         ]
