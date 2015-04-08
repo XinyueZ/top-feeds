@@ -71,5 +71,6 @@ func handleTopFeeds(w http.ResponseWriter, r *http.Request) {
 	//Output result of all news-list of all sites.
 	s := fmt.Sprintf(`{"status":%d, "page_index" : %d, "site" : "%s", "site_mobile":"%s", "result":%s}`, 200, page, site, siteMobile, res)
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Cache-Control", "public, max-age=900")
 	fmt.Fprintf(w, s)
 }
