@@ -75,7 +75,7 @@ pubDate        |long    |News published date in timestamp.
 
 ```
 
-#SDK  
+#SDK for Android
 
 There's a SDK based on this API.
 
