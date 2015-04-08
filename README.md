@@ -44,7 +44,7 @@ title        |string   |News title.
 desc        |string   |Description of news, might be empty.
 url        |string   |News location.
 url_mobile        |string    |News location on mobile-host.
-pubDate        |string    |News published date.
+pubDate        |long    |News published date in timestamp.
 
 ####Example
 
@@ -60,20 +60,30 @@ pubDate        |string    |News published date.
                 "desc": "",
                 "url": "http://www.oschina.net/news/61151",
                 "url_mobile": "http://m.oschina.net/news/61151",
-                "pubDate": "2015-04-02 18:46:25"
+                "pubDate": 234523452345
               },
               {
                 "title": "JSUtil 1.1.2 开始支持存储过程调用啦！",
                 "desc": "",
                 "url": "http://www.oschina.net/news/61149",
                 "url_mobile": "http://m.oschina.net/news/61149",
-                "pubDate": "2015-04-02 15:03:14"
+                "pubDate": 234523452345
               },
               ......
         ]
 }
 
 ```
+
+#SDK for Android
+
+There's a SDK based on this API.
+
+https://github.com/XinyueZ/top-feeds-client
+ 
+Example App:
+
+[![https://play.google.com/store/apps/details?id=com.topfeeds4j.sample](https://dl.dropbox.com/s/phrg0387osr3riz/images.jpeg)](https://play.google.com/store/apps/details?id=com.topfeeds4j.sample)
 
 #License
 
