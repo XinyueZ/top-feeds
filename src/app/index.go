@@ -3,9 +3,12 @@ package topfeeds
 import (
 	"csdn"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"oschina"
 	"strconv"
+
+	"bookmark"
 )
 
 import "appengine"
@@ -18,6 +21,10 @@ func (e Error) Error() string {
 
 func init() {
 	http.HandleFunc("/topfeeds", handleTopFeeds)
+
+	http.HandleFunc("/bookmark", handleAddBookmark)
+	http.HandleFunc("/bookmarkList", handleBookmarkList)
+	http.HandleFunc("/removeBookmark", handleRemoveBookmark)
 }
 
 func handleTopFeeds(w http.ResponseWriter, r *http.Request) {
@@ -72,5 +79,56 @@ func handleTopFeeds(w http.ResponseWriter, r *http.Request) {
 	s := fmt.Sprintf(`{"status":%d, "page_index" : %d, "site" : "%s", "site_mobile":"%s", "result":%s}`, 200, page, site, siteMobile, res)
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Cache-Control", "public, max-age=900")
+	fmt.Fprintf(w, s)
+}
+
+func handleAddBookmark(w http.ResponseWriter, r *http.Request) {
+	var s string
+	if bytes, e := ioutil.ReadAll(r.Body); e == nil {
+		cxt := appengine.NewContext(r)
+		ch := make(chan bool)
+		go bookmark.AddBookmark(cxt, bytes, ch)
+		if <-ch {
+			s = fmt.Sprintf(`{"status":%d}`, 200)
+		} else {
+			s = fmt.Sprintf(`{"status":%d}`, 300)
+		}
+	} else {
+		s = fmt.Sprintf(`{"status":%d}`, 300)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprintf(w, s)
+}
+
+func handleBookmarkList(w http.ResponseWriter, r *http.Request) {
+	cxt := appengine.NewContext(r)
+	var s string
+	ch := make(chan *string)
+	go bookmark.GetBookmarkList(cxt, ch)
+	p := <-ch
+	if p != nil {
+		s = fmt.Sprintf(`{"status":%d, result:%s}`, 200, *p)
+	} else {
+		s = fmt.Sprintf(`{"status":%d}`, 300)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprintf(w, s)
+}
+
+func handleRemoveBookmark(w http.ResponseWriter, r *http.Request) {
+	var s string
+	if bytes, e := ioutil.ReadAll(r.Body); e == nil {
+		cxt := appengine.NewContext(r)
+		ch := make(chan bool)
+		go bookmark.DelBookmark(cxt, bytes, ch)
+		if <-ch {
+			s = fmt.Sprintf(`{"status":%d}`, 200)
+		} else {
+			s = fmt.Sprintf(`{"status":%d}`, 300)
+		}
+	} else {
+		s = fmt.Sprintf(`{"status":%d}`, 300)
+	}
+	w.Header().Set("Content-Type", "application/json")
 	fmt.Fprintf(w, s)
 }
