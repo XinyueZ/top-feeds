@@ -83,11 +83,14 @@ func handleTopFeeds(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleAddBookmark(w http.ResponseWriter, r *http.Request) {
+	args := r.URL.Query()
+	ident := args["ident"][0]
+
 	var s string
 	if bytes, e := ioutil.ReadAll(r.Body); e == nil {
 		cxt := appengine.NewContext(r)
 		ch := make(chan bool)
-		go bookmark.AddBookmark(cxt, bytes, ch)
+		go bookmark.AddBookmark(cxt, ident, bytes, ch)
 		if <-ch {
 			s = fmt.Sprintf(`{"status":%d}`, 200)
 		} else {
@@ -101,10 +104,13 @@ func handleAddBookmark(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleBookmarkList(w http.ResponseWriter, r *http.Request) {
+	args := r.URL.Query()
+	ident := args["ident"][0]
+
 	cxt := appengine.NewContext(r)
 	var s string
 	ch := make(chan *string)
-	go bookmark.GetBookmarkList(cxt, ch)
+	go bookmark.GetBookmarkList(cxt, ident, ch)
 	p := <-ch
 	if p != nil {
 		s = fmt.Sprintf(`{"status":%d, result:%s}`, 200, *p)
@@ -116,11 +122,14 @@ func handleBookmarkList(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleRemoveBookmark(w http.ResponseWriter, r *http.Request) {
+	args := r.URL.Query()
+	ident := args["ident"][0]
+
 	var s string
 	if bytes, e := ioutil.ReadAll(r.Body); e == nil {
 		cxt := appengine.NewContext(r)
 		ch := make(chan bool)
-		go bookmark.DelBookmark(cxt, bytes, ch)
+		go bookmark.DelBookmark(cxt, ident, bytes, ch)
 		if <-ch {
 			s = fmt.Sprintf(`{"status":%d}`, 200)
 		} else {
