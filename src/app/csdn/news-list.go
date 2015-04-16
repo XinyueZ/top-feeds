@@ -61,6 +61,7 @@ func (self *NewsList) Create(cxt appengine.Context, chJsonStr chan *string) {
 					s := "[" //Start making a json result.
 					for _, v := range pNewsList.Channel.NewsEntries {
 						v.Title = strings.Replace(v.Title, "\"", "'", -1)
+						v.Description = strings.Replace(v.Description, "\"", "'", -1)
 						v.UrlMobile = strings.Replace(v.Url, "www", "m", -1)
 
 						loc, _ := time.LoadLocation("Asia/Shanghai")
