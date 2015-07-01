@@ -1,6 +1,8 @@
 Top Feeds  
 ==============
-Getting top-news of IT from comminuty [CSDN](http://www.csdn.net)  and
+Recent IT information and news from China.
+
+From comminuty [CSDN](http://www.csdn.net), [Techug](http://www.techug.com)  and
 [OSCHINA](http://www.oschina) .
 
 
@@ -16,13 +18,15 @@ Getting top-news of IT from comminuty [CSDN](http://www.csdn.net)  and
 
 Var     |  Value
 --------|---------
-type    | 1 ([CSDN](http://www.csdn.net)) or other([OSCHINA](http://www.oschina.net)), default is other.
+type    | 1 ([CSDN](http://www.csdn.net)), 2 ([Techug](http://www.techug.com)) or other([OSCHINA](http://www.oschina.net)), default is other.
 page    | The page-index >= 0. But it works only when type == 0 ([OSCHINA](http://www.oschina.net))
 
 
 ####Example
 
 [OSCHINA](http://www.oschina): http://top-feeds-90308.appspot.com/topfeeds?type=0&page=0
+
+[Techug](http://www.oschina): http://top-feeds-90308.appspot.com/topfeeds?type=2
 
 [CSDN](http://www.csdn.net) : http://top-feeds-90308.appspot.com/topfeeds?type=1
 
@@ -190,9 +194,9 @@ Example App:
 #License
 
 ```
-The MIT License (MIT)
+                    The MIT License (MIT)
 
-Copyright (c) 2015 Chris Xinyue Zhao
+            Copyright (c) 2015 Chris Xinyue Zhao
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

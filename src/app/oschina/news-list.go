@@ -83,7 +83,10 @@ func (self *NewsList) Create(cxt appengine.Context, page int, chJsonStr chan *st
 					s := "[" //Start making a json result.
 					for _, v := range pNewsList.NewsEntries.Array {
 						v.Title = strings.Replace(v.Title, "\"", "'", -1)
+						v.Title = strings.Replace(v.Title, "\\", ",", -1)
 						v.Title = strings.Replace(v.Title, "%", "％", -1)
+						v.Title = strings.Replace(v.Title, "\n", "", -1)
+						v.Title = strings.Replace(v.Title, "\t", "", -1)
 						if v.Url == "" { //A Url might be null then we need change it self associated with its type.
 							v.Url = fmt.Sprintf("http://www.oschina.net/news/%d", v.Id)
 							v.UrlMobile = fmt.Sprintf("http://m.oschina.net/news/%d", v.Id)

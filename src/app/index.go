@@ -2,10 +2,12 @@ package topfeeds
 
 import (
 	"csdn"
+	"techug"
+	"oschina"
+
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"oschina"
 	"strconv"
 
 	"bookmark"
@@ -65,6 +67,14 @@ func handleTopFeeds(w http.ResponseWriter, r *http.Request) {
 
 		site = "http://www.csdn.net"
 		siteMobile = "http://m.csdn.net"
+	case 2:
+		//Ask techug:
+		chTechug := make(chan *string)
+		go techug.NewNewsList().Create(cxt, chTechug)
+		res = *(<-chTechug)
+
+		site = "http://www.techug.com"
+		siteMobile = "http://www.techug.com"
 	default:
 		//Ask news-list of www.oschina.net
 		chOsc := make(chan *string)
