@@ -17,7 +17,6 @@ const (
 	//pageIndex: The first page.
 	//pageSize:20
 	API    = "http://www.oschina.net/action/api/news_list?catalog=1&pageIndex=%d&pageSize=20"
-	DETAIL = "http://www.oschina.net/action/api/news_detail?id=%d"
 	// `Format` and `Parse` use example-based layouts. Usually
 	// you'll use a constant from `time` for these layouts, but
 	// you can also supply custom layouts. Layouts must use the
@@ -52,7 +51,7 @@ type NewsEntry struct {
 	Url          string `xml:"url"` //Might be empty then the news-type should be used to build a url
 	UrlMobile    string
 	NewsType     NewsType `xml:"newstype"`
-	Description  string
+	Description  string `xml:"body"`
 }
 
 type NewsType struct {
@@ -93,26 +92,7 @@ func (self *NewsList) Create(cxt appengine.Context, page int, chJsonStr chan *st
 						} else {
 							v.UrlMobile = v.Url
 						}
-
-						//To fetch details and make description.
-						/*
-							if r, e := http.NewRequest("GET", fmt.Sprintf(DETAIL, v.Id), nil); e == nil {
-								if resp, e := client.Do(r); e == nil {
-									if resp != nil {
-										defer resp.Body.Close()
-									}
-
-									pNewsDetail := new(NewsDetail)
-									if bytes, e := ioutil.ReadAll(resp.Body); e == nil {
-										//cxt.Infof("Details: %v", string(bytes))
-										if e := xml.Unmarshal(bytes, pNewsDetail); e == nil {
-											v.Description = pNewsDetail.NewsBody.Content[0:20]
-										}
-									}
-								}
-							}
-						*/
-
+ 
 						loc, _ := time.LoadLocation("Asia/Shanghai")
 						t, _ := time.ParseInLocation(OSC_DATE_FORMAT, v.PubDate, loc)
 						v.PubDate = t.String()
