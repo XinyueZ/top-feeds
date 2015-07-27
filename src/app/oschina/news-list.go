@@ -86,13 +86,20 @@ func (self *NewsList) Create(cxt appengine.Context, page int, chJsonStr chan *st
 						v.Title = strings.Replace(v.Title, "%", "％", -1)
 						v.Title = strings.Replace(v.Title, "\n", "", -1)
 						v.Title = strings.Replace(v.Title, "\t", "", -1)
+
+						v.Description = strings.Replace(v.Description, "\"", "'", -1)
+						v.Description = strings.Replace(v.Description, "\\", ",", -1)
+						v.Description = strings.Replace(v.Description, "%", "％", -1)
+						v.Description = strings.Replace(v.Description, "\n", "", -1)
+						v.Description = strings.Replace(v.Description, "\t", "", -1)
+						
 						if v.Url == "" { //A Url might be null then we need change it self associated with its type.
 							v.Url = fmt.Sprintf("http://www.oschina.net/news/%d", v.Id)
 							v.UrlMobile = fmt.Sprintf("http://m.oschina.net/news/%d", v.Id)
 						} else {
 							v.UrlMobile = v.Url
 						}
- 
+
 						loc, _ := time.LoadLocation("Asia/Shanghai")
 						t, _ := time.ParseInLocation(OSC_DATE_FORMAT, v.PubDate, loc)
 						v.PubDate = t.String()
