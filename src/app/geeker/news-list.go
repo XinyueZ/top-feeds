@@ -7,12 +7,12 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"time" 
+	"time"  
 
 	"appengine"
 	"appengine/urlfetch"
 
-	"github.com/PuerkitoBio/goquery"
+	//"github.com/PuerkitoBio/goquery"
 	xhtml "golang.org/x/net/html"
 )
 
@@ -60,22 +60,24 @@ func parse_xhtml(cxt appengine.Context, n *xhtml.Node, pValues *[]string) {
 		}
 		c := n.FirstChild
 		title = c.Data
-
+		//cxt.Infof("title: %s", title)
+	
+		/*	
 		desc := ""
 		if link != "" {
 			doc, err := goquery.NewDocumentGAE(cxt, link)
 			if err == nil {
-				desc = doc.Find("title").Text() 
+				desc= doc.Find("title").Text()
 			} else {
 				cxt.Errorf("desc: %v", err)
 			}
 		}
 		
 		cxt.Infof("desc: %s", desc)
-		
+		*/
 		now, _ := strconv.ParseInt(time.Now().Local().Format("20060102150405"), 10, 64)
 		json := fmt.Sprintf(`{"title" : "%s", "desc" : "%s", "url" : "%s", "url_mobile" : "%s",  "pubDate" : %d },`,
-			title, desc, link, link, now)
+			title, "", link, link, now)
 		*pValues = append(*pValues, json)
 	}
 	for c := n.FirstChild; c != nil; c = c.NextSibling {

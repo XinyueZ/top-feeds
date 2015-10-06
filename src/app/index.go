@@ -4,6 +4,7 @@ import (
 	"csdn"
 	"techug"
 	"oschina"
+	"geeker"
 
 	"fmt"
 	"io/ioutil"
@@ -50,14 +51,19 @@ func handleTopFeeds(w http.ResponseWriter, r *http.Request) {
 	}
 
 	page := 0
+	from := ""
 	if len(args["page"]) > 0 {
-		p, _ := strconv.Atoi(args["page"][0]) //Which page, if typ is csdn(1), then ignore this.
-		page = p
+		if typ != 3 {
+			p, _ := strconv.Atoi(args["page"][0]) //Which page, if typ is csdn(1), techug.com(2), geekers(3), ignore this.
+			page = p
+		} else {
+			from = args["page"][0] //For geekers(3) the "from" value for starting page.
+		}
 	}
 
 	site := ""
 	siteMobile := ""
-	res := ""
+	res := "" 
 	switch typ {
 	case 1:
 		//Ask csdn:
@@ -75,6 +81,16 @@ func handleTopFeeds(w http.ResponseWriter, r *http.Request) {
 
 		site = "http://www.techug.com"
 		siteMobile = "http://www.techug.com"
+	case 3:
+		//Ask geeker:
+		chGeeker := make(chan *string)
+		chFrom :=  make(chan *string)
+		go geeker.NewNewsList().Create(cxt, from, chGeeker, chFrom)
+		res = *(<-chGeeker)
+		from =  *(<-chFrom)
+		
+		site = "http://geek.csdn.net"
+		siteMobile = "http://geek.csdn.net"
 	default:
 		//Ask news-list of www.oschina.net
 		chOsc := make(chan *string)
@@ -86,7 +102,7 @@ func handleTopFeeds(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Output result of all news-list of all sites.
-	s := fmt.Sprintf(`{"status":%d, "page_index" : %d, "site" : "%s", "site_mobile":"%s", "result":%s}`, 200, page, site, siteMobile, res)
+	s := fmt.Sprintf(`{"status":%d, "page_index" : %d, "from" : "%s", "site" : "%s", "site_mobile":"%s", "result":%s}`, 200, page, from, site, siteMobile, res)
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Cache-Control", "public, max-age=900")
 	fmt.Fprintf(w, s)
