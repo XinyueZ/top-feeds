@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"time"
+	"time" 
 
 	"appengine"
 	"appengine/urlfetch"
@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	API = "http://geek.csdn.net/service/news/get_news_list?type=hackernewsv2_new&size=20&from=%s"
+	API = "http://geek.csdn.net/service/news/get_news_list?type=hackernewsv2_new&size=10&from=%s"
 	// `Format` and `Parse` use example-based layouts. Usually
 	// you'll use a constant from `time` for these layouts, but
 	// you can also supply custom layouts. Layouts must use the
@@ -63,12 +63,11 @@ func parse_xhtml(cxt appengine.Context, n *xhtml.Node, pValues *[]string) {
 
 		desc := ""
 		if link != "" {
-			doc, err := goquery.NewDocument(link)
+			doc, err := goquery.NewDocumentGAE(cxt, link)
 			if err == nil {
-				desc = doc.Find("head").Text()
-				if desc != "" {
-					desc = fmt.Sprintf("%s...", desc[:len(desc)-1])
-				}
+				desc = doc.Find("title").Text() 
+			} else {
+				cxt.Errorf("desc: %v", err)
 			}
 		}
 		
@@ -85,7 +84,7 @@ func parse_xhtml(cxt appengine.Context, n *xhtml.Node, pValues *[]string) {
 }
 
 //Create a news-list and return a json-feeds to client through channel.
-func (self *NewsList) Create(cxt appengine.Context, from string, chJsonStr chan *string) {
+func (self *NewsList) Create(cxt appengine.Context, from string, chJsonStr chan *string, chFrom chan *string) {
 	client := urlfetch.Client(cxt)
 	if r, e := http.NewRequest("GET", fmt.Sprintf(API, from), nil); e == nil {
 		if resp, e := client.Do(r); e == nil {
@@ -114,20 +113,25 @@ func (self *NewsList) Create(cxt appengine.Context, from string, chJsonStr chan 
 					}
 					s += "]" //Stop making json
 					chJsonStr <- &s
+					chFrom <- &pNewsList.From 
 				} else {
 					chJsonStr <- nil
+					chFrom <- nil
 					cxt.Errorf("Error but still going: %v", e)
 				}
 			} else {
 				chJsonStr <- nil
+				chFrom <- nil
 				panic(e)
 			}
 		} else {
 			chJsonStr <- nil
+			chFrom <- nil
 			cxt.Errorf("Error but still going: %v", e)
 		}
 	} else {
 		chJsonStr <- nil
+		chFrom <- nil
 		panic(e)
 	}
 }
