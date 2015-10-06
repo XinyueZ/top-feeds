@@ -4,8 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"net/http"
-	"strconv"
+	"net/http" 
 	"strings"
 	"time"  
 
@@ -74,8 +73,10 @@ func parse_xhtml(cxt appengine.Context, n *xhtml.Node, pValues *[]string) {
 		}
 		
 		cxt.Infof("desc: %s", desc)
-		*/
-		now, _ := strconv.ParseInt(time.Now().Local().Format("20060102150405"), 10, 64)
+		*/ 
+		t := time.Now()
+		loc, _ := time.LoadLocation("Asia/Shanghai") 
+		now := t.In(loc).Unix()
 		json := fmt.Sprintf(`{"title" : "%s", "desc" : "%s", "url" : "%s", "url_mobile" : "%s",  "pubDate" : %d },`,
 			title, "", link, link, now)
 		*pValues = append(*pValues, json)
