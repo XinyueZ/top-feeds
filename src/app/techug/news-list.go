@@ -34,7 +34,6 @@ type NewsList struct {
 	Channel Channel  `xml:"channel"`
 }
 
-
 type Channel struct {
 	NewsEntries []NewsEntry `xml:"item"`
 }
@@ -46,7 +45,6 @@ type NewsEntry struct {
 	Url         string `xml:"link"` //Might be empty then the news-type should be used to build a url
 	UrlMobile   string
 }
-
 
 //Create a news-list and return a json-feeds to client through channel.
 func (self *NewsList) Create(cxt appengine.Context, chJsonStr chan *string) {
@@ -64,13 +62,13 @@ func (self *NewsList) Create(cxt appengine.Context, chJsonStr chan *string) {
 					for _, v := range pNewsList.Channel.NewsEntries {
 						v.Title = strings.Replace(v.Title, "\"", "'", -1)
 						v.Title = strings.Replace(v.Title, "%", "％", -1)
-            v.Title = strings.Replace(v.Title, "\\", ",", -1)
+						v.Title = strings.Replace(v.Title, "\\", ",", -1)
 						v.Description = strings.Replace(v.Description, "\"", "'", -1)
 						v.Description = strings.Replace(v.Description, "%", "％", -1)
-            v.Description = strings.Replace(v.Description, " ", "", -1)
-            v.Description = strings.Replace(v.Description, "\n", "", -1)
-            v.Description = strings.Replace(v.Description, "\t", "", -1)
-						v.UrlMobile = v.Url//strings.Replace(v.Url, "www", "m", -1)
+						v.Description = strings.Replace(v.Description, " ", "", -1)
+						v.Description = strings.Replace(v.Description, "\n", "", -1)
+						v.Description = strings.Replace(v.Description, "\t", "", -1)
+						v.UrlMobile = v.Url //strings.Replace(v.Url, "www", "m", -1)
 
 						loc, _ := time.LoadLocation("Asia/Shanghai")
 						t, _ := time.ParseInLocation(TECHUG_DATE_FORMAT, v.PubDate, loc)

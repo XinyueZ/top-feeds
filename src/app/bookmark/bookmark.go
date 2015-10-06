@@ -6,7 +6,7 @@ type BookmarkList struct {
 }
 
 type BookmarkEntry struct {
-	Ident   string 
+	Ident       string
 	Title       string `json:"title"`
 	Description string `json:"desc"`
 	PubDate     int    `json:"pubDate"`
