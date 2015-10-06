@@ -2,8 +2,16 @@ Top Feeds
 ==============
 Recent IT information and news from China.
 
-From comminuty [CSDN](http://www.csdn.net), [Techug](http://www.techug.com)  and
-[OSCHINA](http://www.oschina) .
+From comminuty 
+
+[CSDN](http://www.csdn.net)
+
+[Geek news](http://geek.csdn.net/) 
+
+[Techug](http://www.techug.com)
+
+[OSCHINA](http://www.oschina) 
+ 
 
 
 #API
@@ -18,17 +26,19 @@ From comminuty [CSDN](http://www.csdn.net), [Techug](http://www.techug.com)  and
 
 Var     |  Value
 --------|---------
-type    | 1 ([CSDN](http://www.csdn.net)), 2 ([Techug](http://www.techug.com)) or other([OSCHINA](http://www.oschina.net)), default is other.
+type    | 1 ([CSDN](http://www.csdn.net)), 2 ([Techug](http://www.techug.com)) , 3 ([Geek news](http://geek.csdn.net/))  or other([OSCHINA](http://www.oschina.net)), default is other.
 page    | The page-index >= 0. But it works only when type == 0 ([OSCHINA](http://www.oschina.net))
 
 
 ####Example
 
-[OSCHINA](http://www.oschina): http://top-feeds-90308.appspot.com/topfeeds?type=0&page=0
+[OSCHINA](http://www.oschina): http://top-feeds2-91415.appspot.com/topfeeds?type=0&page=0
 
-[Techug](http://www.oschina): http://top-feeds-90308.appspot.com/topfeeds?type=2
+[Techug](http://www.oschina): http://top-feeds2-91415.appspot.com/topfeeds?type=2
 
-[CSDN](http://www.csdn.net) : http://top-feeds-90308.appspot.com/topfeeds?type=1
+[CSDN](http://www.csdn.net) : http://top-feeds2-91415.appspot.com/topfeeds?type=1
+
+[Geek news](http://geek.csdn.net/): http://top-feeds2-91415.appspot.com/topfeeds?type=3&page=6:40577
 
 ####Result
 
@@ -37,7 +47,8 @@ page    | The page-index >= 0. But it works only when type == 0 ([OSCHINA](http:
 Var      | Type     | Comment
 ---------|---------|---------
 status        |int   |200 is OK, 300 or other is error.
-page_index        |int   |Page index of list. When the feeds from [CSDN](http://www.csdn.net), it must be 0 always, otherwise works >= 0.
+from  |string  |Page from for [Geek news](http://geek.csdn.net/). Only works for  [Geek news](http://geek.csdn.net/), type=3
+page_index        |int   |Page index of list. Only works for [OSCHINA](http://www.oschina), type!=1,2,3.
 site        |string   |The host of feeds.
 site_mobile        |string   |The mobile-host of feeds.
 result        |array    |The list of news-entry.
@@ -57,6 +68,7 @@ pubDate        |long    |News published date in timestamp.
 ```
 {
   "status": 200,
+  "from": "6:40577",
   "page_index": 0,
   "site": "http://www.oschina.net",
   "site_mobile": "http://m.oschina.net",
