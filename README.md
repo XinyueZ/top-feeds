@@ -27,7 +27,7 @@ From comminuty
 Var     |  Value
 --------|---------
 type    | 1 ([CSDN](http://www.csdn.net)), 2 ([Techug](http://www.techug.com)) , 3 ([Geek news](http://geek.csdn.net/))  or other([OSCHINA](http://www.oschina.net)), default is other.
-page    | The page-index >= 0. But it works only when type == 0 ([OSCHINA](http://www.oschina.net)), 3 ([Geek news](http://geek.csdn.net/))
+page    | The page-index >= 0 or page from. But it works only when type == 0 ([OSCHINA](http://www.oschina.net)), 3 ([Geek news](http://geek.csdn.net/))
 
 
 ####Example
