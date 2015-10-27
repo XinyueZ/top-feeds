@@ -5,13 +5,15 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http" 
+	"net/url"
 	"strings"
-	"time"  
+	"time" 
 
 	"appengine"
 	"appengine/urlfetch"
 
 	//"github.com/PuerkitoBio/goquery"
+	//"code.google.com/p/mahonia"
 	xhtml "golang.org/x/net/html"
 )
 
@@ -47,7 +49,7 @@ func isTitle(attr []xhtml.Attribute) bool {
 	return false
 }
 
-func parse_xhtml(cxt appengine.Context, n *xhtml.Node, pValues *[]string) {
+func parse_xhtml(cxt appengine.Context, n *xhtml.Node, pValues *string) {
 	if n.Type == xhtml.ElementNode && n.Data == "a" && isTitle(n.Attr) {
 		link := ""
 		title := ""
@@ -55,31 +57,59 @@ func parse_xhtml(cxt appengine.Context, n *xhtml.Node, pValues *[]string) {
 			if element.Key == "href" {
 				link = element.Val
 				link = strings.Replace(link, `\"`, ``, -1)
+				link, _ = url.QueryUnescape(link)
 			}
 		}
 		c := n.FirstChild
 		title = c.Data
-		//cxt.Infof("title: %s", title)
-	
-		/*	
+		title = strings.Replace(title, `\n`, ``, -1)
+		title = strings.Replace(title, `\t`, ``, -1)
+		title = strings.Replace(title, `\r`, ``, -1)
+		title = strings.Replace(title, `\f`, ``, -1)
+		title = strings.Replace(title, `\v`, ``, -1)
+		title = strings.Replace(title, ` `, ``, -1)
+		title = strings.Replace(title, `“`, `'`, -1)
+		title = strings.Replace(title, `”`, `'`, -1)
+		title = strings.Replace(title, `"`, `'`, -1)
+		title = strings.Replace(title, `，`, `,`, -1)
+		title = strings.TrimSpace(title)
+
+		cxt.Infof("title: %s", title)	
 		desc := ""
-		if link != "" {
+		/*if link != "" {
 			doc, err := goquery.NewDocumentGAE(cxt, link)
 			if err == nil {
-				desc= doc.Find("title").Text()
+				desc = doc.Find("title").Text()
+				desc = strings.Replace(desc, `\n`, ``, -1)
+				desc = strings.Replace(desc, `\t`, ``, -1)
+				desc = strings.Replace(desc, `\r`, ``, -1)
+				desc = strings.Replace(desc, `\f`, ``, -1)
+				desc = strings.Replace(desc, `\v`, ``, -1)
+				desc = strings.Replace(desc, ` `, ``, -1)
+				desc = strings.TrimSpace(desc)
+				decGBK := mahonia.NewDecoder("gb18030")
+				decUTF8 := mahonia.NewDecoder("utf-8")
+				if decDesc, ok := decGBK.ConvertStringOK(desc); !ok {
+					if decDesc, ok := decUTF8.ConvertStringOK(desc); ok  {
+						desc = decDesc
+					} else {
+						//...
+					}
+				}  else {
+					desc = decDesc
+				}
 			} else {
 				cxt.Errorf("desc: %v", err)
 			}
 		}
-		
 		cxt.Infof("desc: %s", desc)
-		*/ 
+		*/
 		t := time.Now()
 		loc, _ := time.LoadLocation("Asia/Shanghai") 
 		now := t.In(loc).Unix()
 		json := fmt.Sprintf(`{"title" : "%s", "desc" : "%s", "url" : "%s", "url_mobile" : "%s",  "pubDate" : %d },`,
-			title, "", link, link, now)
-		*pValues = append(*pValues, json)
+			title, desc, link, link, now)
+		*pValues += json
 	}
 	for c := n.FirstChild; c != nil; c = c.NextSibling {
 		parse_xhtml(cxt, c, pValues)
@@ -98,7 +128,7 @@ func (self *NewsList) Create(cxt appengine.Context, from string, chJsonStr chan 
 			pNewsList := new(NewsList)
 			if bt, e := ioutil.ReadAll(resp.Body); e == nil {
 				if e := json.Unmarshal(bt, pNewsList); e == nil {
-					jsons := []string{}
+					jsons := ""
 					source := strings.TrimSpace(pNewsList.Html)
 					source = strings.Replace(source, `"`, `\"`, -1)
 				 
@@ -106,10 +136,8 @@ func (self *NewsList) Create(cxt appengine.Context, from string, chJsonStr chan 
 					doc, _ := xhtml.Parse(pReader)
 					parse_xhtml(cxt, doc, &jsons)
 
-					s := "[" //Start making a json result.
-					for _, json := range jsons {
-						s += json
-					}
+					s := "[" //Start making a json result. 
+					s+=jsons
 					length := len(s)
 					if length > 2 {
 						s = s[:length-1] //Remove last ","
