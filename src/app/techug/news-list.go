@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
-	"time"
+	"time" 
 
 	"appengine"
 	"appengine/urlfetch"
@@ -47,7 +47,7 @@ type NewsEntry struct {
 }
 
 //Create a news-list and return a json-feeds to client through channel.
-func (self *NewsList) Create(cxt appengine.Context, chJsonStr chan *string) {
+func (self *NewsList) Create(  cxt appengine.Context, chJsonStr chan *string) {
 	client := urlfetch.Client(cxt)
 	if r, e := http.NewRequest("GET", API, nil); e == nil {
 		if resp, e := client.Do(r); e == nil {
@@ -57,9 +57,14 @@ func (self *NewsList) Create(cxt appengine.Context, chJsonStr chan *string) {
 
 			pNewsList := new(NewsList)
 			if bytes, e := ioutil.ReadAll(resp.Body); e == nil {
-				if e := xml.Unmarshal(bytes, pNewsList); e == nil {
+				orginal := string(bytes)
+				orginal = strings.Replace(orginal, "<content:encoded>", "<!--", -1)
+				orginal = strings.Replace(orginal, "</content:encoded>", "-->", -1) 
+				  
+				//cxt.Infof("orginal: %s", orginal)
+				if e := xml.Unmarshal([]byte(orginal), pNewsList); e == nil {
 					s := "[" //Start making a json result.
-					for _, v := range pNewsList.Channel.NewsEntries {
+					for _, v := range pNewsList.Channel.NewsEntries { 
 						v.Title = strings.Replace(v.Title, "\"", "'", -1)
 						v.Title = strings.Replace(v.Title, "%", "％", -1)
 						v.Title = strings.Replace(v.Title, "\\", ",", -1)
@@ -67,6 +72,7 @@ func (self *NewsList) Create(cxt appengine.Context, chJsonStr chan *string) {
 						v.Description = strings.Replace(v.Description, "%", "％", -1)
 						v.Description = strings.Replace(v.Description, " ", "", -1)
 						v.Description = strings.Replace(v.Description, "\n", "", -1)
+						v.Description = strings.Replace(v.Description, "\t", "", -1)
 						v.Description = strings.Replace(v.Description, "\t", "", -1)
 						v.UrlMobile = v.Url //strings.Replace(v.Url, "www", "m", -1)
 
@@ -86,7 +92,7 @@ func (self *NewsList) Create(cxt appengine.Context, chJsonStr chan *string) {
 					chJsonStr <- &s
 				} else {
 					chJsonStr <- nil
-					cxt.Errorf("Error but still going: %v", e)
+					cxt.Errorf("Unmarshal's Error but still going: %v", e)
 				}
 			} else {
 				chJsonStr <- nil
@@ -94,7 +100,7 @@ func (self *NewsList) Create(cxt appengine.Context, chJsonStr chan *string) {
 			}
 		} else {
 			chJsonStr <- nil
-			cxt.Errorf("Error but still going: %v", e)
+			cxt.Errorf("Http-client's Error but still going: %v", e)
 		}
 	} else {
 		chJsonStr <- nil
