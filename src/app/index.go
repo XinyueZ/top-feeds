@@ -5,13 +5,14 @@ import (
 	"techug"
 	"oschina"
 	"geeker"
-
+	"androider"
+	"bookmark"
+	
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
 
-	"bookmark"
 )
 
 import "appengine"
@@ -44,7 +45,7 @@ func handleTopFeeds(w http.ResponseWriter, r *http.Request) {
 
 	args := r.URL.Query()
 
-	typ := 0 //Which type, 0: oschina, 1: csdn
+	typ := 0 
 	if len(args["type"]) > 0 {
 		t, _ := strconv.Atoi(args["type"][0])
 		typ = t
@@ -53,11 +54,11 @@ func handleTopFeeds(w http.ResponseWriter, r *http.Request) {
 	page := 0
 	from := ""
 	if len(args["page"]) > 0 {
-		if typ != 3 {
-			p, _ := strconv.Atoi(args["page"][0]) //Which page, if typ is csdn(1), techug.com(2), geekers(3), ignore this.
+		if typ != 3 &&  typ != 4 {
+			p, _ := strconv.Atoi(args["page"][0]) //Which page, if typ is csdn(1), techug.com(2), when geekers(3), android(4), ignore this.
 			page = p
 		} else {
-			from = args["page"][0] //For geekers(3) the "from" value for starting page.
+			from = args["page"][0] //For geekers(3), android(4) the "from" value for starting page.
 		}
 	}
 
@@ -91,6 +92,16 @@ func handleTopFeeds(w http.ResponseWriter, r *http.Request) {
 		
 		site = "http://geek.csdn.net"
 		siteMobile = "http://geek.csdn.net"
+	case 4:
+		//Ask android-developer blog:
+		chAndroider:= make(chan *string)
+		chFrom :=  make(chan *string)
+		go androider.NewNewsList().Create(cxt, from, chAndroider, chFrom)
+		res = *(<-chAndroider)
+		from =  *(<-chFrom)
+		
+		site = "http://android-developers.blogspot.de/"
+		siteMobile = "http://android-developers.blogspot.de/"
 	default:
 		//Ask news-list of www.oschina.net
 		chOsc := make(chan *string)
