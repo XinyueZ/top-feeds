@@ -1,5 +1,8 @@
 package androider
 
+/**
+This API has been deprecated and insteaded by blog-API.
+**/
 import ( 
 	"fmt"
 	"io/ioutil"

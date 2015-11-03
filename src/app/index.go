@@ -5,14 +5,15 @@ import (
 	"techug"
 	"oschina"
 	"geeker"
-	"androider"
+	"androider" //Deprecated
+	"blogger"
 	"bookmark"
 	
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
-
+	"encoding/json"
 )
 
 import "appengine"
@@ -21,6 +22,10 @@ type Error string
 
 func (e Error) Error() string {
 	return string(e)
+}
+
+type Blog struct {
+		Id           string    `json:"id"`
 }
 
 func init() {
@@ -34,6 +39,10 @@ func init() {
 func handleTopFeeds(w http.ResponseWriter, r *http.Request) {
 	cxt := appengine.NewContext(r)
 
+	page := 0
+	from := "0"
+	pBlog :=  new(Blog)
+	
 	//Error-handling anyway.
 	defer func() {
 		if err := recover(); err != nil {
@@ -49,16 +58,24 @@ func handleTopFeeds(w http.ResponseWriter, r *http.Request) {
 	if len(args["type"]) > 0 {
 		t, _ := strconv.Atoi(args["type"][0])
 		typ = t
-	}
+		if typ == 5 {
+			//For blogs, to get id of blog
+			if bys, e := ioutil.ReadAll(r.Body); e == nil { 
+				if e := json.Unmarshal(bys, pBlog); e == nil {
+					//Ignore error
+				}
+			} else {
+				//Ignore error
+			}
+		}
+	} 
 
-	page := 0
-	from := ""
 	if len(args["page"]) > 0 {
-		if typ != 3 &&  typ != 4 {
-			p, _ := strconv.Atoi(args["page"][0]) //Which page, if typ is csdn(1), techug.com(2), when geekers(3), android(4), ignore this.
+		if typ != 3 &&  typ != 4 &&  typ != 5 {
+			p, _ := strconv.Atoi(args["page"][0]) //Which page, if typ is csdn(1), techug.com(2), when geekers(3), android(4),blogger(5)  ignore this.
 			page = p
 		} else {
-			from = args["page"][0] //For geekers(3), android(4) the "from" value for starting page.
+			from = args["page"][0] //For geekers(3), android(4) , blogger(5)the "from" value for starting page.
 		}
 	}
 
@@ -92,7 +109,7 @@ func handleTopFeeds(w http.ResponseWriter, r *http.Request) {
 		
 		site = "http://geek.csdn.net"
 		siteMobile = "http://geek.csdn.net"
-	case 4:
+	case 4: //Deprecated
 		//Ask android-developer blog:
 		chAndroider:= make(chan *string)
 		chFrom :=  make(chan *string)
@@ -102,6 +119,16 @@ func handleTopFeeds(w http.ResponseWriter, r *http.Request) {
 		
 		site = "http://android-developers.blogspot.de/"
 		siteMobile = "http://android-developers.blogspot.de/"
+	case 5:
+		//Ask a blogger:
+		chBlogger:= make(chan *string)
+		chFrom :=  make(chan *string)
+		go blogger.NewNewsList().Create(cxt, pBlog.Id, from, chBlogger, chFrom)
+		res = *(<-chBlogger)
+		from =  *(<-chFrom)
+		
+		site = "http://www.blogger.com"
+		siteMobile = "http://www.blogger.com"
 	default:
 		//Ask news-list of www.oschina.net
 		chOsc := make(chan *string)
