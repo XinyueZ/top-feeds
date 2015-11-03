@@ -66,7 +66,7 @@ func (self *NewsList) Create(cxt appengine.Context, bloggerId string, from strin
 						v.Title = strings.Replace(v.Title, "%", "％", -1)
 						v.Title = strings.Replace(v.Title, "\n", "", -1)
 						v.Title = strings.Replace(v.Title, "\t", "", -1)  
-						v.UrlMobile = fmt.Sprintf("%s??m=1", v.Url)
+						v.UrlMobile = fmt.Sprintf("%s?m=1", v.Url)
   
 						lastBin := strings.LastIndex( v.Updated, "-" )
 						v.Updated =  v.Updated[0:lastBin]

@@ -13,7 +13,7 @@ import (
  
  
 func GetBookmarkList(cxt appengine.Context, ident string, ch chan *string) { 
-	where := fmt.Sprintf(WHERE, ident)
+	where := fmt.Sprintf(SEL, ident)
 	if req, err := http.NewRequest("GET", URL + "?" + where, nil); err == nil {
 		req.Header.Add(DB_HEADER_APP_ID, DB_APP_ID)
 		req.Header.Add(DB_HEADER_API_KEY, DB_API_KEY)  

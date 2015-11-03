@@ -1,7 +1,6 @@
 package bookmark
 
-import (
-	"fmt"
+import ( 
 	"encoding/json"
 	"net/http"
 	"bytes"
@@ -16,9 +15,8 @@ func AddBookmark(cxt appengine.Context, ident string, body []byte, ch chan bool)
 	pBookmarkEntry.Ident = ident
 	json.Unmarshal(body, pBookmarkEntry);
 	entryJson, _ := json.Marshal(*pBookmarkEntry) 
-	
-	where := fmt.Sprintf(WHERE, ident)
-	if req, err := http.NewRequest("POST", URL + "?" + where,  bytes.NewBuffer(entryJson)); err == nil {
+	 
+	if req, err := http.NewRequest("POST", URL,  bytes.NewBuffer(entryJson)); err == nil {
 		req.Header.Add(DB_HEADER_APP_ID, DB_APP_ID)
 		req.Header.Add(DB_HEADER_API_KEY, DB_API_KEY)
 		req.Header.Add(CONTENT_TYPE, API_RESTYPE)
