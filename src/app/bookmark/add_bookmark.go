@@ -1,22 +1,42 @@
 package bookmark
 
 import (
+	"fmt"
 	"encoding/json"
-
-	"appengine"
-	"appengine/datastore"
+	"net/http"
+	"bytes"
+	
+	"appengine" 
+	"appengine/urlfetch"
+	 
 )
 
 func AddBookmark(cxt appengine.Context, ident string, body []byte, ch chan bool) {
 	pBookmarkEntry := new(BookmarkEntry)
 	pBookmarkEntry.Ident = ident
-	if e := json.Unmarshal(body, pBookmarkEntry); e == nil {
-		if _, e := datastore.Put(cxt, datastore.NewIncompleteKey(cxt, "BookmarkEntry", nil), pBookmarkEntry); e == nil {
-			ch <- true
+	json.Unmarshal(body, pBookmarkEntry);
+	entryJson, _ := json.Marshal(*pBookmarkEntry) 
+	
+	where := fmt.Sprintf(WHERE, ident)
+	if req, err := http.NewRequest("POST", URL + "?" + where,  bytes.NewBuffer(entryJson)); err == nil {
+		req.Header.Add(DB_HEADER_APP_ID, DB_APP_ID)
+		req.Header.Add(DB_HEADER_API_KEY, DB_API_KEY)
+		req.Header.Add(CONTENT_TYPE, API_RESTYPE)
+		httpClient := urlfetch.Client(cxt)
+		r, err := httpClient.Do(req)
+		if r != nil {
+			defer r.Body.Close()
+		}
+		if err == nil {
+			cxt.Infof("POST entry successfully.")
+			ch<-true
 		} else {
-			ch <- false
+			cxt.Errorf("POST entry error: %v.", err) 
+			ch<-false
 		}
 	} else {
-		ch <- false
+		cxt.Errorf("Build request error: %v.", err) 
+		ch<-false
 	}
-}
+	 
+} 

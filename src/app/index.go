@@ -29,11 +29,11 @@ type Blog struct {
 }
 
 func init() {
-	http.HandleFunc("/topfeeds", handleTopFeeds)
-
+	http.HandleFunc("/topfeeds", handleTopFeeds) 
 	http.HandleFunc("/bookmark", handleAddBookmark)
 	http.HandleFunc("/bookmarkList", handleBookmarkList)
 	http.HandleFunc("/removeBookmark", handleRemoveBookmark)
+	http.HandleFunc("/bookmarkTransfer", handleBookmarkListTransfer)
 }
 
 func handleTopFeeds(w http.ResponseWriter, r *http.Request) {
@@ -177,7 +177,7 @@ func handleBookmarkList(w http.ResponseWriter, r *http.Request) {
 	go bookmark.GetBookmarkList(cxt, ident, ch)
 	p := <-ch
 	if p != nil {
-		s = fmt.Sprintf(`{"status":%d, result:%s}`, 200, *p)
+		s = fmt.Sprintf(`{"status":%d, %s}`, 200, *p)
 	} else {
 		s = fmt.Sprintf(`{"status":%d}`, 300)
 	}
@@ -205,3 +205,13 @@ func handleRemoveBookmark(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	fmt.Fprintf(w, s)
 }
+
+func handleBookmarkListTransfer(w http.ResponseWriter, r *http.Request) {
+	cxt := appengine.NewContext(r)
+	ch := make(chan int)
+	go bookmark.Transfer(cxt, ch)
+	<-ch
+	fmt.Fprintf(w, "Done, DB transfer." )
+}
+
+
