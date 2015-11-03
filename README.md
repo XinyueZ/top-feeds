@@ -49,7 +49,7 @@ Blogs from [Blogger](http://www.blogger.com): http://top-feeds2-91415.appspot.co
 Var      | Type     | Comment
 ---------|---------|---------
 status        |int   |200 is OK, 300 or other is error.
-from  |string  |Page from for [Geek news](http://geek.csdn.net/) and Blogs from [Blogger](http://www.blogger.com. Only works for  [Geek news](http://geek.csdn.net/), type=3 and 5
+from  |string  |Start Page from for [Geek news](http://geek.csdn.net/) and Blogs from [Blogger](http://www.blogger.com. Works for type=3 and 5
 page_index        |int   |Page index of list. Only works for [OSCHINA](http://www.oschina), type!=1,2,3.
 site        |string   |The host of feeds.
 site_mobile        |string   |The mobile-host of feeds.
