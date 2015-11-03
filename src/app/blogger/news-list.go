@@ -17,8 +17,8 @@ const (
 	KEY = "AIzaSyDpy_nLxxUU3n7CLG5ozCqMEzWnMrxvTSA"
 	//LIVE 
 	//KEY = "AIzaSyCeZuL95RHFZG3Q6THzPZYgncP_Ewd2x5Q"
-	API_FIRST_PAGE = "https://www.googleapis.com/blogger/v3/blogs/%s/posts?key=%s"
-	API_NEXT_PAGE = "https://www.googleapis.com/blogger/v3/blogs/%s/posts?key=%s&pageToken=%s"
+	API_FIRST_PAGE = "https://www.googleapis.com/blogger/v3/blogs/%s/posts?key=%s&fetchBodies=false&fetchImages=false"
+	API_NEXT_PAGE = "https://www.googleapis.com/blogger/v3/blogs/%s/posts?key=%s&pageToken=%s&fetchBodies=false&fetchImages=false"
 	BLOGGER_DATE_FORMAT = "2006-01-02T15:04:05"
 )
 
