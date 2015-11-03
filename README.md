@@ -1,6 +1,6 @@
 Top Feeds  
 ==============
-Recent IT information and news from China.
+Recent IT information and news from China, some tech-blogs hosted by Blogs from [Blogger](http://www.blogger.com) .
 
 From comminuty 
 
@@ -12,7 +12,7 @@ From comminuty
 
 [OSCHINA](http://www.oschina) 
  
-
+Blogs from [Blogger](http://www.blogger.com) 
 
 #API
 
@@ -26,19 +26,21 @@ From comminuty
 
 Var     |  Value
 --------|---------
-type    | 1 ([CSDN](http://www.csdn.net)), 2 ([Techug](http://www.techug.com)) , 3 ([Geek news](http://geek.csdn.net/))  or other([OSCHINA](http://www.oschina.net)), default is other.
+type    | 1 ([CSDN](http://www.csdn.net)), 2 ([Techug](http://www.techug.com)) , 3 ([Geek news](http://geek.csdn.net/)), 5 ([Blogger](http://www.blogger.com)) or other([OSCHINA](http://www.oschina.net)), default is other.
 page    | The page-index >= 0 or page from. But it works only when type == 0 ([OSCHINA](http://www.oschina.net)), 3 ([Geek news](http://geek.csdn.net/))
 
 
 ####Example
 
-[OSCHINA](http://www.oschina): http://top-feeds2-91415.appspot.com/topfeeds?type=0&page=0
+[OSCHINA](http://www.oschina): http://top-feeds-90308.appspot.com/topfeeds?type=0&page=0
 
-[Techug](http://www.oschina): http://top-feeds2-91415.appspot.com/topfeeds?type=2
+[Techug](http://www.oschina): http://top-feeds-90308.appspot.com/topfeeds?type=2
 
-[CSDN](http://www.csdn.net) : http://top-feeds2-91415.appspot.com/topfeeds?type=1
+[CSDN](http://www.csdn.net) : http://top-feeds-90308.appspot.com/topfeeds?type=1
 
-[Geek news](http://geek.csdn.net/): http://top-feeds2-91415.appspot.com/topfeeds?type=3&page=6:40577
+[Geek news](http://geek.csdn.net/): http://top-feeds-90308.appspot.com/topfeeds?type=3&page=6:40577
+
+Blogs from [Blogger](http://www.blogger.com): http://top-feeds2-91415.appspot.com/topfeeds?type=5&page=CgkIChjgqtaE9ikQ64mAu4jExuBd
 
 ####Result
 
@@ -47,7 +49,7 @@ page    | The page-index >= 0 or page from. But it works only when type == 0 ([O
 Var      | Type     | Comment
 ---------|---------|---------
 status        |int   |200 is OK, 300 or other is error.
-from  |string  |Page from for [Geek news](http://geek.csdn.net/). Only works for  [Geek news](http://geek.csdn.net/), type=3
+from  |string  |Start Page from for [Geek news](http://geek.csdn.net/) and Blogs from [Blogger](http://www.blogger.com. Works for type=3 and 5
 page_index        |int   |Page index of list. Only works for [OSCHINA](http://www.oschina), type!=1,2,3.
 site        |string   |The host of feeds.
 site_mobile        |string   |The mobile-host of feeds.
