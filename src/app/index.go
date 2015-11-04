@@ -33,7 +33,7 @@ func init() {
 	http.HandleFunc("/bookmark", handleAddBookmark)
 	http.HandleFunc("/bookmarkList", handleBookmarkList)
 	http.HandleFunc("/removeBookmark", handleRemoveBookmark)
-	http.HandleFunc("/bookmarkTransfer", handleBookmarkListTransfer)
+	//http.HandleFunc("/bookmarkTransfer", handleBookmarkListTransfer)
 }
 
 func handleTopFeeds(w http.ResponseWriter, r *http.Request) {
