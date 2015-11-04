@@ -13,9 +13,9 @@ import (
 )
 
 const ( 
-	//DEV
+	//server 1  top-feeds-90308
 	KEY = "AIzaSyDpy_nLxxUU3n7CLG5ozCqMEzWnMrxvTSA"
-	//LIVE 
+	//server 2: top-feeds2-91415
 	//KEY = "AIzaSyCeZuL95RHFZG3Q6THzPZYgncP_Ewd2x5Q"
 	API_FIRST_PAGE = "https://www.googleapis.com/blogger/v3/blogs/%s/posts?key=%s&fetchBodies=false&fetchImages=false"
 	API_NEXT_PAGE = "https://www.googleapis.com/blogger/v3/blogs/%s/posts?key=%s&pageToken=%s&fetchBodies=false&fetchImages=false"
