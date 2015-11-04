@@ -22,7 +22,7 @@ func DelBookmark(cxt appengine.Context, ident string, body []byte, ch chan bool)
 	pBookmarkEntry := new(BookmarkEntry)
 	json.Unmarshal(body, pBookmarkEntry)
 	cxt.Infof("%v", pBookmarkEntry)
-	where := fmt.Sprintf(DEL, ident, pBookmarkEntry.Title, pBookmarkEntry.Description,pBookmarkEntry.PubDate,pBookmarkEntry.Url,pBookmarkEntry.UrlMobile)
+	where := fmt.Sprintf(DEL, ident, pBookmarkEntry.Url)
 	if req, err := http.NewRequest("GET", URL + "?" + where, nil); err == nil {
 		req.Header.Add(DB_HEADER_APP_ID, DB_APP_ID)
 		req.Header.Add(DB_HEADER_API_KEY, DB_API_KEY)  
@@ -37,19 +37,24 @@ func DelBookmark(cxt appengine.Context, ident string, body []byte, ch chan bool)
 				pRes := new(BmobList)
 				json.Unmarshal(bytes, pRes) 
 				cxt.Infof("%v", pRes)
-				req, _ := http.NewRequest("DELETE", URL + "/" + pRes.Results[0].ObjectId, nil)
-				req.Header.Add(DB_HEADER_APP_ID, DB_APP_ID)
-				req.Header.Add(DB_HEADER_API_KEY, DB_API_KEY)  
-				httpClient := urlfetch.Client(cxt)
-				r, err := httpClient.Do(req)
-				if r != nil {
-					defer r.Body.Close()
-				}
-				if err == nil {
-					cxt.Infof("DELETE entry successfully.")
-					ch <- true
+				if pRes.Results != nil && len(pRes.Results) > 0 {
+					req, _ := http.NewRequest("DELETE", URL + "/" + pRes.Results[0].ObjectId, nil)
+					req.Header.Add(DB_HEADER_APP_ID, DB_APP_ID)
+					req.Header.Add(DB_HEADER_API_KEY, DB_API_KEY)  
+					httpClient := urlfetch.Client(cxt)
+					r, err := httpClient.Do(req)
+					if r != nil {
+						defer r.Body.Close()
+					}
+					if err == nil {
+						cxt.Infof("DELETE entry successfully.")
+						ch <- true
+					} else {
+						cxt.Errorf("DELETE entry error: %v.", err)
+						ch <- false
+					}
 				} else {
-					cxt.Errorf("DELETE entry error: %v.", err)
+					cxt.Infof("Nothing found to remove.")
 					ch <- false
 				}
 			} else {
